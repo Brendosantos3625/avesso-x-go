@@ -1,30 +1,42 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:avesso_x_go/main.dart';
+import 'package:avesso_x_go/app/app.dart';
+import 'package:avesso_x_go/app/router/app_router.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  Widget buildApp() => AvessoApp(router: AppRouter.create());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('App starts and shows the home screen', (tester) async {
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('AVESSO X GO'), findsOneWidget);
+    expect(find.text('Eventos em destaque'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Navigates from home to events', (tester) async {
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ver todos os eventos'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Eventos'), findsOneWidget);
+    expect(find.byType(TextField), findsWidgets);
+  });
+
+  testWidgets('Navigates from events to event details', (tester) async {
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ver todos os eventos'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Sunset Festival'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Comprar ingresso'), findsOneWidget);
+    expect(find.text('Sobre o evento'), findsOneWidget);
   });
 }
