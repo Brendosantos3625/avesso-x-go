@@ -21,6 +21,28 @@ class DemoEvent {
 
   String get formattedDate => Formatters.formatDateBR(date);
   String get formattedPrice => Formatters.formatBRL(price);
+
+  /// Serializa o evento para armazenamento local via `shared_preferences`.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'location': location,
+        'date': date.toIso8601String(),
+        'description': description,
+        'price': price,
+        'category': category,
+      };
+
+  /// Reconstrói um evento a partir da representação persistida.
+  factory DemoEvent.fromJson(Map<String, dynamic> json) => DemoEvent(
+        id: json['id'] as String,
+        title: json['title'] as String,
+        location: json['location'] as String,
+        date: DateTime.parse(json['date'] as String),
+        description: json['description'] as String,
+        price: (json['price'] as num).toDouble(),
+        category: json['category'] as String,
+      );
 }
 
 final List<DemoEvent> demoEvents = [

@@ -19,6 +19,9 @@ class AvessoErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -28,21 +31,21 @@ class AvessoErrorState extends StatelessWidget {
             Icon(
               Icons.error_outline,
               size: 64,
-              color: AppColors.error.withValues(alpha: 0.8),
+              color: colors.error.withValues(alpha: 0.8),
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: AppTextStyles.titleMedium,
+              style: styles.titleMedium,
             ),
             if (message != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
                 message!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                style: styles.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ],

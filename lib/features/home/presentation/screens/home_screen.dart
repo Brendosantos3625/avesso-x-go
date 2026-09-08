@@ -7,9 +7,12 @@ import 'package:avesso_x_go/core/theme/app_colors.dart';
 import 'package:avesso_x_go/core/theme/app_radius.dart';
 import 'package:avesso_x_go/core/theme/app_spacing.dart';
 import 'package:avesso_x_go/core/theme/app_text_styles.dart';
+import 'package:avesso_x_go/core/utils/greetings.dart';
 import 'package:avesso_x_go/core/widgets/avesso_app_bar.dart';
 import 'package:avesso_x_go/core/widgets/avesso_button.dart';
 import 'package:avesso_x_go/core/widgets/avesso_card.dart';
+import 'package:avesso_x_go/features/auth/application/session_scope.dart';
+import 'package:avesso_x_go/features/events/application/catalog_scope.dart';
 import 'package:avesso_x_go/features/events/presentation/screens/events_demo_data.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,7 +20,11 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final featured = demoEvents.take(4).toList();
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+    final featured = CatalogScope.of(context).events.take(4).toList();
+    final session = SessionScope.of(context);
+    final greeting = Greetings.greeting(session.user?.name);
 
     return Scaffold(
       appBar: AvessoAppBar(
@@ -27,7 +34,7 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             tooltip: 'Perfil',
             icon: const Icon(Icons.person_outline),
-            onPressed: () => context.push(RouteNames.profile),
+            onPressed: () => context.go(RouteNames.profile),
           ),
         ],
       ),
@@ -37,16 +44,15 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Olá, ${AppConstants.demoUserName}!',
-                  style: AppTextStyles.titleLarge),
+              Text(greeting, style: styles.titleLarge),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 'Descubra experiências inesquecíveis perto de você.',
-                style: AppTextStyles.bodyMedium
-                    .copyWith(color: AppColors.textSecondary),
+                style: styles.bodyMedium
+                    .copyWith(color: colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.xl),
-              Text('Eventos em destaque', style: AppTextStyles.headlineSmall),
+              Text('Eventos em destaque', style: styles.headlineSmall),
               const SizedBox(height: AppSpacing.md),
               SizedBox(
                 height: 240,
@@ -63,7 +69,7 @@ class HomeScreen extends StatelessWidget {
               AvessoButton(
                 label: 'Ver todos os eventos',
                 type: AvessoButtonType.outline,
-                onPressed: () => context.push(RouteNames.events),
+                onPressed: () => context.go(RouteNames.events),
               ),
             ],
           ),
@@ -80,6 +86,9 @@ class _FeaturedEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return SizedBox(
       width: 240,
       child: AvessoCard(
@@ -93,7 +102,7 @@ class _FeaturedEventCard extends StatelessWidget {
               event.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.titleMedium,
+              style: styles.titleMedium,
             ),
             const SizedBox(height: AppSpacing.xs),
             Row(
@@ -101,13 +110,13 @@ class _FeaturedEventCard extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 14,
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(
                     event.formattedDate,
-                    style: AppTextStyles.bodySmall,
+                    style: styles.bodySmall,
                   ),
                 ),
               ],
@@ -115,8 +124,8 @@ class _FeaturedEventCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               event.formattedPrice,
-              style: AppTextStyles.labelLarge
-                  .copyWith(color: AppColors.primary),
+              style: styles.labelLarge
+                  .copyWith(color: colors.primary),
             ),
           ],
         ),
@@ -132,19 +141,22 @@ class _CategoryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.14),
+        color: colors.primary.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(AppRadius.small),
       ),
       child: Text(
         label,
-        style: AppTextStyles.labelLarge.copyWith(
-          color: AppColors.primary,
+        style: styles.labelLarge.copyWith(
+          color: colors.primary,
           fontSize: 12,
         ),
       ),

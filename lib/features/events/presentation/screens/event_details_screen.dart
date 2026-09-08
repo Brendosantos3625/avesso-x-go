@@ -10,8 +10,7 @@ import 'package:avesso_x_go/core/widgets/avesso_app_bar.dart';
 import 'package:avesso_x_go/core/widgets/avesso_button.dart';
 import 'package:avesso_x_go/core/widgets/avesso_card.dart';
 import 'package:avesso_x_go/core/widgets/avesso_error_state.dart';
-
-import 'events_demo_data.dart';
+import 'package:avesso_x_go/features/events/application/catalog_scope.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   const EventDetailsScreen({super.key, required this.eventId});
@@ -20,7 +19,7 @@ class EventDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final event = demoEventById(eventId);
+    final event = CatalogScope.of(context).eventById(eventId);
 
     return Scaffold(
       appBar: AvessoAppBar(title: event?.title ?? 'Evento'),
@@ -40,7 +39,7 @@ class EventDetailsScreen extends StatelessWidget {
                     const SizedBox(height: AppSpacing.lg),
                     Text(
                       event.title,
-                      style: AppTextStyles.headlineSmall,
+                      style: AppTextStyles.of(context).headlineSmall,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     _InfoRow(
@@ -53,12 +52,15 @@ class EventDetailsScreen extends StatelessWidget {
                       text: event.formattedDate,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    Text('Sobre o evento', style: AppTextStyles.titleMedium),
+                    Text(
+                      'Sobre o evento',
+                      style: AppTextStyles.of(context).titleMedium,
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       event.description,
-                      style: AppTextStyles.bodyLarge
-                          .copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.of(context).bodyLarge
+                          .copyWith(color: AppColors.of(context).textSecondary),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     AvessoCard(
@@ -67,15 +69,15 @@ class EventDetailsScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Ingresso',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                            style: AppTextStyles.of(context).bodyMedium.copyWith(
+                                  color: AppColors.of(context).textSecondary,
+                                ),
                           ),
                           Text(
                             event.formattedPrice,
-                            style: AppTextStyles.titleLarge.copyWith(
-                              color: AppColors.primary,
-                            ),
+                            style: AppTextStyles.of(context).titleLarge.copyWith(
+                                  color: AppColors.of(context).primary,
+                                ),
                           ),
                         ],
                       ),
@@ -84,7 +86,9 @@ class EventDetailsScreen extends StatelessWidget {
                     AvessoButton(
                       label: 'Comprar ingresso',
                       icon: Icons.confirmation_number_outlined,
-                      onPressed: () => context.push(RouteNames.checkout),
+                      onPressed: () => context.push(
+                        RouteNames.checkoutWith(event.id),
+                      ),
                     ),
                   ],
                 ),
@@ -101,14 +105,16 @@ class _EventHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
     return Container(
       height: 180,
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.surfaceAlt],
+          colors: [colors.primary, colors.surfaceAlt],
         ),
         borderRadius: BorderRadius.circular(AppRadius.extraLarge),
       ),
@@ -116,7 +122,7 @@ class _EventHero extends StatelessWidget {
         child: Icon(
           Icons.event_available,
           size: 64,
-          color: AppColors.onPrimary.withValues(alpha: 0.9),
+          color: colors.onPrimary.withValues(alpha: 0.9),
         ),
       ),
     );
@@ -131,15 +137,17 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.textSecondary),
+        Icon(icon, size: 18, color: colors.textSecondary),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Text(
             text,
-            style: AppTextStyles.bodyMedium
-                .copyWith(color: AppColors.textSecondary),
+            style: styles.bodyMedium.copyWith(color: colors.textSecondary),
           ),
         ),
       ],

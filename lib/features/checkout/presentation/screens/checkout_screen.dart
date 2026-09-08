@@ -8,14 +8,81 @@ import 'package:avesso_x_go/core/theme/app_text_styles.dart';
 import 'package:avesso_x_go/core/widgets/avesso_app_bar.dart';
 import 'package:avesso_x_go/core/widgets/avesso_button.dart';
 import 'package:avesso_x_go/core/widgets/avesso_card.dart';
+import 'package:avesso_x_go/core/widgets/avesso_error_state.dart';
+import 'package:avesso_x_go/features/auth/application/session_scope.dart';
+import 'package:avesso_x_go/features/events/application/catalog_scope.dart';
 import 'package:avesso_x_go/features/events/presentation/screens/events_demo_data.dart';
+import 'package:avesso_x_go/features/tickets/application/purchase_scope.dart';
 
-class CheckoutScreen extends StatelessWidget {
-  const CheckoutScreen({super.key});
+class CheckoutScreen extends StatefulWidget {
+  const CheckoutScreen({super.key, this.eventId});
+
+  final String? eventId;
+
+  @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  bool _confirming = false;
+
+  DemoEvent? _resolveEvent(BuildContext context) {
+    final catalog = CatalogScope.of(context);
+    final eventId = widget.eventId;
+    if (eventId != null) {
+      final event = catalog.eventById(eventId);
+      if (event != null) {
+        return event;
+      }
+    }
+    if (catalog.events.isNotEmpty) {
+      return catalog.events.first;
+    }
+    return null;
+  }
+
+  Future<void> _confirmPayment(DemoEvent event) async {
+    setState(() => _confirming = true);
+
+    final user = SessionScope.of(context).user;
+    if (user == null) {
+      setState(() => _confirming = false);
+      return;
+    }
+
+    final success = await PurchaseScope.of(context).buy(
+      user: user,
+      event: event,
+    );
+
+    if (!mounted) {
+      return;
+    }
+    setState(() => _confirming = false);
+
+    if (success) {
+      context.push(RouteNames.checkoutSuccess);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final event = demoEvents.first;
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+    final event = _resolveEvent(context);
+
+    if (event == null) {
+      return Scaffold(
+        appBar: AvessoAppBar(title: 'Checkout'),
+        body: SafeArea(
+          child: AvessoErrorState(
+            title: 'Evento não encontrado',
+            message: 'Este evento pode não estar mais disponível.',
+            onRetry: () => context.go(RouteNames.events),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AvessoAppBar(title: 'Checkout'),
@@ -23,7 +90,7 @@ class CheckoutScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
-            Text('Resumo do pedido', style: AppTextStyles.titleLarge),
+            Text('Resumo do pedido', style: styles.titleLarge),
             const SizedBox(height: AppSpacing.md),
             AvessoCard(
               child: Column(
@@ -34,7 +101,8 @@ class CheckoutScreen extends StatelessWidget {
                   const _SummaryDivider(),
                   _SummaryRow(label: 'Quantidade', value: '1 ingresso'),
                   const _SummaryDivider(),
-                  _SummaryRow(label: 'Valor unitário', value: event.formattedPrice),
+                  _SummaryRow(
+                      label: 'Valor unitário', value: event.formattedPrice),
                 ],
               ),
             ),
@@ -45,12 +113,12 @@ class CheckoutScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Total',
-                    style: AppTextStyles.titleMedium,
+                    style: styles.titleMedium,
                   ),
                   Text(
                     event.formattedPrice,
-                    style: AppTextStyles.titleLarge.copyWith(
-                      color: AppColors.primary,
+                    style: styles.titleLarge.copyWith(
+                      color: colors.primary,
                     ),
                   ),
                 ],
@@ -60,23 +128,23 @@ class CheckoutScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: AppColors.surfaceAlt.withValues(alpha: 0.6),
+                color: colors.surfaceAlt.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(AppSpacing.sm),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.lock_outline,
                     size: 18,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
                       'Pagamento em ambiente de demonstração. '
                       'Nenhuma cobrança real será realizada.',
-                      style: AppTextStyles.bodySmall,
+                      style: styles.bodySmall,
                     ),
                   ),
                 ],
@@ -86,7 +154,10 @@ class CheckoutScreen extends StatelessWidget {
             AvessoButton(
               label: 'Confirmar pagamento',
               icon: Icons.check_circle_outline,
-              onPressed: () => context.push(RouteNames.checkoutSuccess),
+              loading: _confirming,
+              onPressed: _confirming
+                  ? null
+                  : () => _confirmPayment(event),
             ),
           ],
         ),
@@ -103,6 +174,9 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Row(
@@ -112,15 +186,14 @@ class _SummaryRow extends StatelessWidget {
             width: 120,
             child: Text(
               label,
-              style: AppTextStyles.bodyMedium
-                  .copyWith(color: AppColors.textSecondary),
+              style: styles.bodyMedium.copyWith(color: colors.textSecondary),
             ),
           ),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: AppTextStyles.bodyMedium,
+              style: styles.bodyMedium,
             ),
           ),
         ],

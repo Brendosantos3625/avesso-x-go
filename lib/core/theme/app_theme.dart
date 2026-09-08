@@ -6,17 +6,27 @@ import 'app_spacing.dart';
 import 'app_text_styles.dart';
 
 abstract final class AppTheme {
-  static const ColorScheme _colorScheme = ColorScheme(
-    brightness: Brightness.dark,
-    primary: AppColors.primary,
-    onPrimary: AppColors.onPrimary,
-    secondary: AppColors.accent,
-    onSecondary: AppColors.onAccent,
-    error: AppColors.error,
-    onError: AppColors.onError,
-    surface: AppColors.surface,
-    onSurface: AppColors.onSurface,
-  );
+  static ThemeData get dark => _build(AppColors.dark);
+
+  static ThemeData get light => _build(AppColors.light);
+
+  static ColorScheme _colorScheme(AppColors colors) {
+    return ColorScheme(
+      brightness: colors.brightness,
+      primary: colors.primary,
+      onPrimary: colors.onPrimary,
+      secondary: colors.accent,
+      onSecondary: colors.onAccent,
+      error: colors.error,
+      onError: colors.onError,
+      surface: colors.surface,
+      onSurface: colors.onSurface,
+      surfaceContainerHighest: colors.surfaceAlt,
+      outline: colors.border,
+      outlineVariant: colors.border,
+      onSurfaceVariant: colors.textSecondary,
+    );
+  }
 
   static OutlineInputBorder _inputBorder(Color color, double width) {
     return OutlineInputBorder(
@@ -25,55 +35,64 @@ abstract final class AppTheme {
     );
   }
 
-  static ThemeData get dark {
-    final base = ThemeData(useMaterial3: true, colorScheme: _colorScheme);
-    return base.copyWith(
-      scaffoldBackgroundColor: AppColors.background,
-      textTheme: AppTextStyles.textTheme,
-      appBarTheme: const AppBarTheme(
+  static ThemeData _build(AppColors colors) {
+    final styles = AppTextStyles.resolve(colors);
+    final colorScheme = _colorScheme(colors);
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: colors.background,
+      extensions: [colors],
+      textTheme: styles.textTheme,
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
         toolbarHeight: 64,
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
-        titleTextStyle: AppTextStyles.titleLarge,
+        iconTheme: IconThemeData(color: colors.textPrimary),
+        titleTextStyle: styles.titleLarge,
       ),
-      textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: AppColors.primary,
-        selectionColor: AppColors.primary,
-        selectionHandleColor: AppColors.primary,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: colors.primary,
+        selectionColor: colors.primary.withValues(alpha: 0.3),
+        selectionHandleColor: colors.primary,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surfaceAlt,
-        labelStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-        hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textSecondary.withValues(alpha: 0.6),
-        ),
-        errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
-        counterStyle: AppTextStyles.bodySmall,
+        fillColor: colors.surfaceAlt,
+        labelStyle: AppTextStyles.resolve(colors)
+            .bodyMedium
+            .copyWith(color: colors.textSecondary),
+        hintStyle: AppTextStyles.resolve(colors)
+            .bodyMedium
+            .copyWith(color: colors.textSecondary.withValues(alpha: 0.6)),
+        errorStyle: AppTextStyles.resolve(colors)
+            .bodySmall
+            .copyWith(color: colors.error),
+        counterStyle: AppTextStyles.resolve(colors).bodySmall,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.sm + AppSpacing.xs,
         ),
-        enabledBorder: _inputBorder(AppColors.border, 1),
-        focusedBorder: _inputBorder(AppColors.primary, 1.6),
-        errorBorder: _inputBorder(AppColors.error, 1),
-        focusedErrorBorder: _inputBorder(AppColors.error, 1.6),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppRadius.medium)),
-          borderSide: BorderSide(color: AppColors.border),
+        enabledBorder: _inputBorder(colors.border, 1),
+        focusedBorder: _inputBorder(colors.primary, 1.6),
+        errorBorder: _inputBorder(colors.error, 1),
+        focusedErrorBorder: _inputBorder(colors.error, 1.6),
+        border: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(AppRadius.medium)),
+          borderSide: BorderSide(color: colors.border),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.onPrimary,
-          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.4),
-          disabledForegroundColor: AppColors.onPrimary.withValues(alpha: 0.5),
-          textStyle: AppTextStyles.labelLarge,
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+          disabledBackgroundColor: colors.primary.withValues(alpha: 0.4),
+          disabledForegroundColor: colors.onPrimary.withValues(alpha: 0.5),
+          textStyle: styles.labelLarge,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
@@ -86,10 +105,10 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.transparent,
-          foregroundColor: AppColors.primary,
-          disabledForegroundColor: AppColors.primary.withValues(alpha: 0.4),
-          side: const BorderSide(color: AppColors.primary),
-          textStyle: AppTextStyles.labelLarge,
+          foregroundColor: colors.primary,
+          disabledForegroundColor: colors.primary.withValues(alpha: 0.4),
+          side: BorderSide(color: colors.primary),
+          textStyle: styles.labelLarge,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
@@ -101,14 +120,36 @@ abstract final class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          textStyle: AppTextStyles.labelLarge,
+          foregroundColor: colors.primary,
+          textStyle: styles.labelLarge,
         ),
       ),
-      dividerTheme: const DividerThemeData(
-        color: AppColors.border,
+      dividerTheme: DividerThemeData(
+        color: colors.border,
         thickness: 1,
         space: 1,
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colors.surface,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: colors.primary.withValues(alpha: 0.16),
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? colors.primary
+                : colors.textSecondary,
+          ),
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => styles.labelLarge.copyWith(
+            color: states.contains(WidgetState.selected)
+                ? colors.primary
+                : colors.textSecondary,
+          ),
+        ),
+      ),
+      listTileTheme: ListTileThemeData(
+        iconColor: colors.textSecondary,
       ),
     );
   }

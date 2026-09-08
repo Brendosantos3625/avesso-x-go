@@ -10,6 +10,7 @@ import 'package:avesso_x_go/core/widgets/avesso_app_bar.dart';
 import 'package:avesso_x_go/core/widgets/avesso_card.dart';
 import 'package:avesso_x_go/core/widgets/avesso_empty_state.dart';
 import 'package:avesso_x_go/core/widgets/avesso_text_field.dart';
+import 'package:avesso_x_go/features/events/application/catalog_scope.dart';
 
 import 'events_demo_data.dart';
 
@@ -36,7 +37,8 @@ class _EventsScreenState extends State<EventsScreen> {
 
   List<DemoEvent> get _filteredEvents {
     final query = _query.trim().toLowerCase();
-    return demoEvents.where((event) {
+    final catalog = CatalogScope.of(context).events;
+    return catalog.where((event) {
       final matchesCategory =
           _allCategories || event.category == _category;
       final matchesQuery =
@@ -50,7 +52,7 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AvessoAppBar(title: 'Eventos'),
+      appBar: AvessoAppBar(title: 'Eventos', showBackButton: false),
       body: SafeArea(
         child: Column(
           children: [
@@ -78,6 +80,9 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   Widget _buildCategoryFilters() {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -95,14 +100,14 @@ class _EventsScreenState extends State<EventsScreen> {
                 onSelected: (_) => setState(() {
                   _category = category == 'Todos' ? null : category;
                 }),
-                labelStyle: AppTextStyles.bodyMedium.copyWith(
+                labelStyle: styles.bodyMedium.copyWith(
                   color: _isSelected(category)
-                      ? AppColors.onPrimary
-                      : AppColors.textSecondary,
+                      ? colors.onPrimary
+                      : colors.textSecondary,
                 ),
-                selectedColor: AppColors.primary,
-                backgroundColor: AppColors.surfaceAlt,
-                side: const BorderSide(color: AppColors.border),
+                selectedColor: colors.primary,
+                backgroundColor: colors.surfaceAlt,
+                side: BorderSide(color: colors.border),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                     AppRadius.extraLarge,
@@ -163,6 +168,9 @@ class _EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return AvessoCard(
       onTap: () => context.push(RouteNames.eventDetailsWith(event.id)),
       padding: const EdgeInsets.all(AppSpacing.sm),
@@ -175,13 +183,13 @@ class _EventCard extends StatelessWidget {
               vertical: AppSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.14),
+              color: colors.primary.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(AppRadius.extraLarge),
             ),
             child: Text(
               event.category,
-              style: AppTextStyles.labelLarge
-                  .copyWith(color: AppColors.primary, fontSize: 12),
+              style: styles.labelLarge
+                  .copyWith(color: colors.primary, fontSize: 12),
             ),
           ),
           const Spacer(),
@@ -189,14 +197,14 @@ class _EventCard extends StatelessWidget {
             event.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.titleMedium,
+            style: styles.titleMedium,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             event.location,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.bodySmall,
+            style: styles.bodySmall,
           ),
           const SizedBox(height: AppSpacing.sm),
           Row(
@@ -205,13 +213,13 @@ class _EventCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   event.formattedDate,
-                  style: AppTextStyles.bodySmall,
+                  style: styles.bodySmall,
                 ),
               ),
               Text(
                 event.formattedPrice,
-                style: AppTextStyles.labelLarge
-                    .copyWith(color: AppColors.primary),
+                style: styles.labelLarge
+                    .copyWith(color: colors.primary),
               ),
             ],
           ),

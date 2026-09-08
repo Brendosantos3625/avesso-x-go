@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:avesso_x_go/app/app.dart';
 import 'package:avesso_x_go/app/router/app_router.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   Widget buildApp() => AvessoApp(router: AppRouter.create());
 
   testWidgets('App starts and shows the home screen', (tester) async {
@@ -13,6 +18,7 @@ void main() {
 
     expect(find.text('AVESSO X GO'), findsOneWidget);
     expect(find.text('Eventos em destaque'), findsOneWidget);
+    expect(find.text('Olá, Usuário! 👋'), findsOneWidget);
   });
 
   testWidgets('Navigates from home to events', (tester) async {
@@ -22,7 +28,13 @@ void main() {
     await tester.tap(find.text('Ver todos os eventos'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Eventos'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.text('Eventos'),
+      ),
+      findsOneWidget,
+    );
     expect(find.byType(TextField), findsWidgets);
   });
 

@@ -12,6 +12,9 @@ class CheckoutSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -20,19 +23,19 @@ class CheckoutSuccessScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.check_circle, size: 96, color: AppColors.accent),
+              Icon(Icons.check_circle, size: 96, color: colors.accent),
               const SizedBox(height: AppSpacing.lg),
               Text(
                 'Compra confirmada!',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.headlineSmall,
+                style: styles.headlineSmall,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'Seu ingresso já está disponível na aba Ingressos.',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium
-                    .copyWith(color: AppColors.textSecondary),
+                style: styles.bodyMedium
+                    .copyWith(color: colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.xxl),
               AvessoButton(

@@ -13,6 +13,9 @@ abstract final class RouteNames {
   static const String organizer = '/organizer';
 
   static const String eventIdParam = 'id';
+  static const String checkoutEventQuery = 'eventId';
 
   static String eventDetailsWith(String eventId) => '/event/$eventId';
+
+  static String checkoutWith(String eventId) => '/checkout?eventId=$eventId';
 }

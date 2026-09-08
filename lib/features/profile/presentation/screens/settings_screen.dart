@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:avesso_x_go/app/theme/theme_scope.dart';
+import 'package:avesso_x_go/core/theme/app_colors.dart';
 import 'package:avesso_x_go/core/theme/app_spacing.dart';
 import 'package:avesso_x_go/core/theme/app_text_styles.dart';
 import 'package:avesso_x_go/core/widgets/avesso_app_bar.dart';
@@ -14,52 +16,71 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
-  bool _darkModeEnabled = true;
 
   @override
   Widget build(BuildContext context) {
+    final styles = AppTextStyles.of(context);
+    final theme = ThemeScope.of(context);
+
     return Scaffold(
       appBar: AvessoAppBar(title: 'Configurações'),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
-            Text('Preferências', style: AppTextStyles.titleMedium),
+            Text('Preferências', style: styles.titleMedium),
+            const SizedBox(height: AppSpacing.sm),
+            AvessoCard(
+              padding: EdgeInsets.zero,
+              child: SwitchListTile(
+                secondary: const Icon(Icons.notifications_outlined),
+                title: Text(
+                  'Notificações',
+                  style: styles.bodyLarge,
+                ),
+                subtitle: Text(
+                  'Alertas de eventos e ofertas',
+                  style: styles.bodySmall,
+                ),
+                value: _notificationsEnabled,
+                onChanged: (value) =>
+                    setState(() => _notificationsEnabled = value),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text('Tema', style: styles.titleMedium),
             const SizedBox(height: AppSpacing.sm),
             AvessoCard(
               padding: EdgeInsets.zero,
               child: Column(
                 children: [
-                  SwitchListTile(
-                    secondary: const Icon(Icons.notifications_outlined),
-                    title: Text(
-                      'Notificações',
-                      style: AppTextStyles.bodyLarge,
-                    ),
-                    subtitle: Text(
-                      'Alertas de eventos e ofertas',
-                      style: AppTextStyles.bodySmall,
-                    ),
-                    value: _notificationsEnabled,
-                    onChanged: (value) =>
-                        setState(() => _notificationsEnabled = value),
+                  _ThemeOptionTile(
+                    icon: Icons.light_mode_outlined,
+                    label: 'Claro',
+                    selected: theme.isLight,
+                    onTap: () =>
+                        theme.setMode(ThemeMode.light),
                   ),
                   const Divider(),
-                  SwitchListTile(
-                    secondary: const Icon(Icons.dark_mode_outlined),
-                    title: Text(
-                      'Tema escuro',
-                      style: AppTextStyles.bodyLarge,
-                    ),
-                    value: _darkModeEnabled,
-                    onChanged: (value) =>
-                        setState(() => _darkModeEnabled = value),
+                  _ThemeOptionTile(
+                    icon: Icons.dark_mode_outlined,
+                    label: 'Escuro',
+                    selected: theme.isDark,
+                    onTap: () => theme.setMode(ThemeMode.dark),
+                  ),
+                  const Divider(),
+                  _ThemeOptionTile(
+                    icon: Icons.brightness_auto_outlined,
+                    label: 'Sistema',
+                    selected: theme.isSystem,
+                    onTap: () =>
+                        theme.setMode(ThemeMode.system),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Sobre', style: AppTextStyles.titleMedium),
+            Text('Sobre', style: styles.titleMedium),
             const SizedBox(height: AppSpacing.sm),
             AvessoCard(
               child: ListTile(
@@ -67,13 +88,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 leading: const Icon(Icons.info_outline),
                 title: Text(
                   'AVESSO X GO — versão demo',
-                  style: AppTextStyles.bodyLarge,
+                  style: styles.bodyLarge,
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ThemeOptionTile extends StatelessWidget {
+  const _ThemeOptionTile({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label, style: styles.bodyLarge),
+      trailing: selected
+          ? Icon(Icons.check_circle, color: colors.primary)
+          : null,
+      selected: selected,
+      selectedTileColor: colors.surfaceAlt,
+      onTap: selected ? null : onTap,
     );
   }
 }

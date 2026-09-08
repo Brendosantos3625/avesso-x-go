@@ -22,14 +22,15 @@ class AvessoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     final borderRadius = BorderRadius.circular(radius);
     final content = Padding(padding: padding, child: child);
 
     return Material(
-      color: color ?? AppColors.surface,
+      color: color ?? colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
-        side: const BorderSide(color: AppColors.border),
+        side: BorderSide(color: colors.border),
       ),
       clipBehavior: Clip.antiAlias,
       child: onTap == null

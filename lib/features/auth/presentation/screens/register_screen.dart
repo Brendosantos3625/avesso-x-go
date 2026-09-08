@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:avesso_x_go/app/router/route_names.dart';
+import 'package:avesso_x_go/core/theme/app_colors.dart';
 import 'package:avesso_x_go/core/theme/app_spacing.dart';
 import 'package:avesso_x_go/core/theme/app_text_styles.dart';
 import 'package:avesso_x_go/core/widgets/avesso_app_bar.dart';
 import 'package:avesso_x_go/core/widgets/avesso_button.dart';
 import 'package:avesso_x_go/core/widgets/avesso_text_field.dart';
+import 'package:avesso_x_go/features/auth/application/session_scope.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,16 +19,60 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
 
-  void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
+  bool _loading = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    final session = SessionScope.of(context);
+    final error = await session.register(
+      name: _nameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _loading = false;
+      _error = error;
+    });
+
+    if (error == null) {
       context.go(RouteNames.home);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Scaffold(
       appBar: AvessoAppBar(title: 'Criar conta'),
       body: SafeArea(
@@ -37,23 +83,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Cadastre-se', style: AppTextStyles.headlineSmall),
+                Text('Cadastre-se', style: styles.headlineSmall),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Crie sua conta para acessar eventos exclusivos.',
-                  style: AppTextStyles.bodyMedium,
+                  style: styles.bodyMedium,
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 AvessoTextField(
+                  controller: _nameController,
                   label: 'Nome completo',
                   hint: 'Seu nome',
                   prefixIcon: Icons.person_outline,
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) => (value == null || value.isEmpty)
                       ? 'Informe seu nome'
                       : null,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AvessoTextField(
+                  controller: _emailController,
                   label: 'E-mail',
                   hint: 'voce@exemplo.com',
                   prefixIcon: Icons.mail_outline,
@@ -64,6 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AvessoTextField(
+                  controller: _passwordController,
                   label: 'Senha',
                   prefixIcon: Icons.lock_outline,
                   obscureText: _obscurePassword,
@@ -86,16 +136,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AvessoTextField(
+                  controller: _confirmPasswordController,
                   label: 'Confirmar senha',
                   prefixIcon: Icons.lock_outline,
                   obscureText: true,
-                  validator: (value) => (value == null || value.isEmpty)
-                      ? 'Confirme sua senha'
-                      : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Confirme sua senha';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'As senhas não conferem';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: AppSpacing.xl),
+                if (_error != null) ...[
+                  Text(
+                    _error!,
+                    style: styles.bodyMedium.copyWith(color: colors.error),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
                 AvessoButton(
                   label: 'Criar conta',
+                  loading: _loading,
                   onPressed: _submit,
                 ),
               ],

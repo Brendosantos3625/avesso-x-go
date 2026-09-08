@@ -1,0 +1,57 @@
+warning: in the working copy of 'lib/app/app.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/app/router/app_router.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/app/router/route_names.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/theme/app_colors.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/theme/app_text_styles.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/theme/app_theme.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/widgets/avesso_app_bar.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/widgets/avesso_button.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/widgets/avesso_card.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/widgets/avesso_empty_state.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/widgets/avesso_error_state.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/auth/presentation/screens/forgot_password_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/auth/presentation/screens/login_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/auth/presentation/screens/register_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/checkout/presentation/screens/checkout_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/checkout/presentation/screens/checkout_success_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/events/presentation/screens/event_details_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/events/presentation/screens/events_demo_data.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/events/presentation/screens/events_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/home/presentation/screens/home_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/organizer/presentation/screens/organizer_dashboard_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/profile/presentation/screens/profile_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/profile/presentation/screens/settings_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/features/tickets/presentation/screens/tickets_screen.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/main.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'pubspec.lock', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'test/widget_test.dart', LF will be replaced by CRLF the next time Git touches it
+ lib/app/app.dart                                   | 104 [32m++++++++++++[m[31m-[m
+ lib/app/router/app_router.dart                     |  57 [32m+++++[m[31m--[m
+ lib/app/router/route_names.dart                    |   3 [32m+[m
+ lib/core/theme/app_colors.dart                     | 151 [32m+++++++++++++++++[m[31m--[m
+ lib/core/theme/app_text_styles.dart                | 147 [32m+++++++++[m[31m---------[m
+ lib/core/theme/app_theme.dart                      | 141 [32m+++++++++++[m[31m-------[m
+ lib/core/widgets/avesso_app_bar.dart               |  28 [32m+++[m[31m-[m
+ lib/core/widgets/avesso_button.dart                |  68 [32m+++++[m[31m----[m
+ lib/core/widgets/avesso_card.dart                  |   5 [32m+[m[31m-[m
+ lib/core/widgets/avesso_empty_state.dart           |  11 [32m+[m[31m-[m
+ lib/core/widgets/avesso_error_state.dart           |  11 [32m+[m[31m-[m
+ lib/core/widgets/avesso_loading.dart               |  51 [31m-------[m
+ .../screens/forgot_password_screen.dart            |   6 [32m+[m[31m-[m
+ .../auth/presentation/screens/login_screen.dart    |  60 [32m+++++++[m[31m-[m
+ .../auth/presentation/screens/register_screen.dart |  79 [32m+++++++++[m[31m-[m
+ .../presentation/screens/checkout_screen.dart      | 105 [32m+++++++++++[m[31m--[m
+ .../screens/checkout_success_screen.dart           |  11 [32m+[m[31m-[m
+ .../presentation/screens/event_details_screen.dart |  48 [32m+++[m[31m---[m
+ .../presentation/screens/events_demo_data.dart     |  22 [32m+++[m
+ .../events/presentation/screens/events_screen.dart |  40 [32m+++[m[31m--[m
+ .../home/presentation/screens/home_screen.dart     |  44 [32m++++[m[31m--[m
+ .../screens/organizer_dashboard_screen.dart        | 165 [32m++++++++++++++++[m[31m-----[m
+ .../presentation/screens/profile_screen.dart       |  40 [32m+++[m[31m--[m
+ .../presentation/screens/settings_screen.dart      | 104 [32m+++++++++[m[31m----[m
+ .../presentation/screens/tickets_screen.dart       | 128 [32m++++++++++++++[m[31m--[m
+ lib/main.dart                                      |  31 [32m+++[m[31m-[m
+ pubspec.lock                                       | 144 [32m++++++++++++++++++[m
+ pubspec.yaml                                       |   2 [32m+[m
+ test/widget_test.dart                              |  14 [32m+[m[31m-[m
+ 29 files changed, 1397 insertions(+), 423 deletions(-)

@@ -23,6 +23,9 @@ class AvessoEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -32,21 +35,21 @@ class AvessoEmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 64,
-              color: AppColors.textSecondary.withValues(alpha: 0.6),
+              color: colors.textSecondary.withValues(alpha: 0.6),
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: AppTextStyles.titleMedium,
+              style: styles.titleMedium,
             ),
             if (message != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
                 message!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                style: styles.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ],

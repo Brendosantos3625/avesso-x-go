@@ -30,6 +30,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final styles = AppTextStyles.of(context);
+
     return Scaffold(
       appBar: AvessoAppBar(title: 'Recuperar senha'),
       body: SafeArea(
@@ -42,13 +44,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               children: [
                 Text(
                   'Esqueceu sua senha?',
-                  style: AppTextStyles.headlineSmall,
+                  style: styles.headlineSmall,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Informe seu e-mail e enviaremos um link para '
                   'redefinir sua senha.',
-                  style: AppTextStyles.bodyMedium,
+                  style: styles.bodyMedium,
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 AvessoTextField(

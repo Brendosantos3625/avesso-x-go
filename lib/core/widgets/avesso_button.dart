@@ -33,36 +33,42 @@ class AvessoButton extends StatelessWidget {
 
   bool get _enabled => !loading && !disabled && onPressed != null;
 
-  Color get _accentColor => danger ? AppColors.error : AppColors.primary;
+  Color _accentColor(AppColors colors) =>
+      danger ? colors.error : colors.primary;
 
-  Color get _foregroundColor => switch (type) {
-        AvessoButtonType.primary => AppColors.onPrimary,
-        AvessoButtonType.secondary => AppColors.textPrimary,
-        AvessoButtonType.outline => _accentColor,
+  Color _foregroundColor(AppColors colors) => switch (type) {
+        AvessoButtonType.primary => colors.onPrimary,
+        AvessoButtonType.secondary => colors.textPrimary,
+        AvessoButtonType.outline => _accentColor(colors),
       };
 
-  Color get _backgroundColor => switch (type) {
-        AvessoButtonType.primary => _accentColor,
-        AvessoButtonType.secondary => AppColors.surfaceAlt,
+  Color _backgroundColor(AppColors colors) => switch (type) {
+        AvessoButtonType.primary => _accentColor(colors),
+        AvessoButtonType.secondary => colors.surfaceAlt,
         AvessoButtonType.outline => Colors.transparent,
       };
 
-  BorderSide get _borderSide => BorderSide(
-        color: _enabled
-            ? _accentColor
-            : _accentColor.withValues(alpha: 0.5),
-        width: 1.4,
-      );
+  BorderSide _borderSide(AppColors colors) {
+    final accent = _accentColor(colors);
+    return BorderSide(
+      color: _enabled ? accent : accent.withValues(alpha: 0.5),
+      width: 1.4,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final styles = AppTextStyles.of(context);
+    final foregroundColor = _foregroundColor(colors);
+
     final Widget content = loading
         ? SizedBox(
             width: 22,
             height: 22,
             child: CircularProgressIndicator(
               strokeWidth: 2.4,
-              color: _foregroundColor,
+              color: foregroundColor,
             ),
           )
         : Row(
@@ -70,7 +76,7 @@ class AvessoButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 20, color: _foregroundColor),
+                Icon(icon, size: 20, color: foregroundColor),
                 const SizedBox(width: AppSpacing.sm),
               ],
               Flexible(
@@ -79,8 +85,8 @@ class AvessoButton extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.labelLarge.copyWith(
-                    color: _foregroundColor.withValues(
+                  style: styles.labelLarge.copyWith(
+                    color: foregroundColor.withValues(
                       alpha: _enabled ? 1 : 0.65,
                     ),
                   ),
@@ -95,7 +101,7 @@ class AvessoButton extends StatelessWidget {
     final ButtonStyle style = switch (type) {
       AvessoButtonType.outline => OutlinedButton.styleFrom(
           minimumSize: size,
-          side: _borderSide,
+          side: _borderSide(colors),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
@@ -103,15 +109,15 @@ class AvessoButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
-          foregroundColor: _foregroundColor,
-          textStyle: AppTextStyles.labelLarge,
+          foregroundColor: foregroundColor,
+          textStyle: styles.labelLarge,
         ),
       AvessoButtonType.secondary => FilledButton.styleFrom(
           minimumSize: size,
-          backgroundColor: AppColors.surfaceAlt,
-          foregroundColor: AppColors.textPrimary,
-          disabledBackgroundColor: AppColors.surfaceAlt.withValues(alpha: 0.4),
-          disabledForegroundColor: AppColors.textPrimary.withValues(alpha: 0.5),
+          backgroundColor: colors.surfaceAlt,
+          foregroundColor: colors.textPrimary,
+          disabledBackgroundColor: colors.surfaceAlt.withValues(alpha: 0.4),
+          disabledForegroundColor: colors.textPrimary.withValues(alpha: 0.5),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
@@ -119,14 +125,14 @@ class AvessoButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
-          textStyle: AppTextStyles.labelLarge,
+          textStyle: styles.labelLarge,
         ),
       AvessoButtonType.primary => FilledButton.styleFrom(
           minimumSize: size,
-          backgroundColor: _backgroundColor,
-          foregroundColor: AppColors.onPrimary,
-          disabledBackgroundColor: _backgroundColor.withValues(alpha: 0.4),
-          disabledForegroundColor: AppColors.onPrimary.withValues(alpha: 0.5),
+          backgroundColor: _backgroundColor(colors),
+          foregroundColor: colors.onPrimary,
+          disabledBackgroundColor: _backgroundColor(colors).withValues(alpha: 0.4),
+          disabledForegroundColor: colors.onPrimary.withValues(alpha: 0.5),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
@@ -134,7 +140,7 @@ class AvessoButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
-          textStyle: AppTextStyles.labelLarge,
+          textStyle: styles.labelLarge,
         ),
     };
 

@@ -13,6 +13,7 @@ import 'package:avesso_x_go/features/profile/presentation/screens/profile_screen
 import 'package:avesso_x_go/features/profile/presentation/screens/settings_screen.dart';
 import 'package:avesso_x_go/features/tickets/presentation/screens/tickets_screen.dart';
 
+import 'main_scaffold.dart';
 import 'route_names.dart';
 
 abstract final class AppRouter {
@@ -36,13 +37,43 @@ abstract final class AppRouter {
           path: RouteNames.forgotPassword,
           builder: (context, state) => const ForgotPasswordScreen(),
         ),
-        GoRoute(
-          path: RouteNames.home,
-          builder: (context, state) => const HomeScreen(),
-        ),
-        GoRoute(
-          path: RouteNames.events,
-          builder: (context, state) => const EventsScreen(),
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) =>
+              MainScaffold(navigationShell: navigationShell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: RouteNames.home,
+                  builder: (context, state) => const HomeScreen(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: RouteNames.events,
+                  builder: (context, state) => const EventsScreen(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: RouteNames.tickets,
+                  builder: (context, state) => const TicketsScreen(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: RouteNames.profile,
+                  builder: (context, state) => const ProfileScreen(),
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: RouteNames.eventDetails,
@@ -52,19 +83,13 @@ abstract final class AppRouter {
         ),
         GoRoute(
           path: RouteNames.checkout,
-          builder: (context, state) => const CheckoutScreen(),
+          builder: (context, state) => CheckoutScreen(
+            eventId: state.uri.queryParameters[RouteNames.checkoutEventQuery],
+          ),
         ),
         GoRoute(
           path: RouteNames.checkoutSuccess,
           builder: (context, state) => const CheckoutSuccessScreen(),
-        ),
-        GoRoute(
-          path: RouteNames.tickets,
-          builder: (context, state) => const TicketsScreen(),
-        ),
-        GoRoute(
-          path: RouteNames.profile,
-          builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
           path: RouteNames.settings,
