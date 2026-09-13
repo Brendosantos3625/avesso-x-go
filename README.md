@@ -1,17 +1,45 @@
 # avesso_x_go
 
-A new Flutter project.
+**AVESSO X GO** — aplicativo Flutter de eventos e ingressos.
 
-## Getting Started
+## Estrutura
 
-This project is a starting point for a Flutter application.
+- `lib/` — aplicação organizada em camadas
+  (`Presentation → Controller → Repository → Data Source`).
+- `test/` — testes automatizados (unitários e de widgets).
+- `supabase/` — migrations e configuração do backend Supabase.
+- `docs/` — documentação técnica.
 
-A few resources to get you started if this is your first Flutter project:
+## Documentação
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- `docs/backend-migration.md` — plano e status da migração para o Supabase.
+- `supabase/README.md` — como aplicar as migrations e configurar o backend.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Rodando (modo local)
+
+Sem configuração extra, o app roda 100% local (demonstração), com conta demo
+`demo@avesso.com` / `avesso123`.
+
+Com Supabase configurado:
+
+```bash
+flutter run \
+  --dart-define=SUPABASE_URL=https://xxxx.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=<anon-key>
+```
+
+Ou via arquivo:
+
+```bash
+cp .env.example .env   # preencha os valores
+flutter run --dart-define-from-file=.env
+```
+
+## Testes e verificação
+
+```bash
+flutter pub get
+flutter analyze
+flutter test
+flutter build web --release
+```

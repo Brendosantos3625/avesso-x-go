@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Arquivos de ambiente com segredos (Supabase e afins) nunca devem ser commitados
+.env
+.env.*
+!.env.example
