@@ -1,6 +1,5 @@
 import 'authenticated_user.dart';
 
-/// Resultado de uma operação de autenticação.
 sealed class AuthResult {
   const AuthResult();
 }
@@ -17,14 +16,6 @@ class AuthFailure extends AuthResult {
   final String message;
 }
 
-/// Contrato da camada de autenticação.
-///
-/// A regra de validação de credenciais vive aqui (no repositório), nunca nas
-/// telas. As telas apenas coletam e-mail/senha, tratam loading/erro e navegam
-/// em caso de sucesso.
-///
-/// Situado para suportar uma futura autenticação real: trocar a implementação
-/// local por uma remota não altera a interface consumida pela aplicação.
 abstract interface class AuthRepository {
   Future<AuthResult> login({
     required String email,
@@ -36,4 +27,8 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
   });
+
+  AuthenticatedUser? getCurrentUser();
+
+  Future<void> signOut();
 }

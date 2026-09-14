@@ -5,7 +5,8 @@ Estrutura de banco e configuração do backend Supabase do **AVESSO X GO**.
 ```
 supabase/
 ├── migrations/
-│   └── 20260912000100_initial_schema.sql   # Esquema inicial (perfis, eventos, pedidos, ingressos)
+│   ├── 20260912000100_initial_schema.sql   # Esquema inicial (perfis, eventos, pedidos, ingressos)
+│   └── 20260914000100_orders_quantity.sql  # Adiciona quantity a orders (int NOT NULL, mín. 1)
 └── README.md
 ```
 
@@ -30,7 +31,8 @@ supabase/
    ```
 
 Ou, no SQL Editor do dashboard do Supabase, cole o conteúdo de
-`migrations/20260912000100_initial_schema.sql`.
+`migrations/20260912000100_initial_schema.sql` e, em seguida,
+`migrations/20260914000100_orders_quantity.sql`.
 
 ---
 
@@ -41,7 +43,7 @@ Ou, no SQL Editor do dashboard do Supabase, cole o conteúdo de
 | `profiles`         | Perfil do usuário, `1:1` com `auth.users`. Criado por trigger.           |
 | `organizer_profiles` | Perfil de organizador (1 por usuário).                                 |
 | `events`           | Eventos do catálogo. RLS: leitura pública apenas de `published`.         |
-| `orders`           | Pedidos de compra. `ON DELETE RESTRICT` preserva histórico.              |
+| `orders`           | Pedidos de compra. `quantity` (int, NOT NULL, mín. 1) alinha ao modelo local. `ON DELETE RESTRICT` preserva histórico. |
 | `tickets`          | Ingressos emitidos por um pedido. `ticket_code` único.                   |
 
 Relacionamentos principais:

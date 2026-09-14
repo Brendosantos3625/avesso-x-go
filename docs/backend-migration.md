@@ -12,6 +12,7 @@ Plano e status da migração do **AVESSO X GO** de um MVP 100% local (Flutter +
 | Configuração segura por ambiente | Criada (`lib/core/supabase/`) |
 | Migration SQL inicial | Criada (`supabase/migrations/`) |
 | RLS + trigger de perfil | Criados na migration |
+| Coluna `orders.quantity` | Adicionada (inteiro, NOT NULL, mín. 1) |
 | Migração dos repositórios | **Não iniciada** (etapa futura) |
 | Pagamento real | **Não implementado** |
 | Persistência local | **Preservada** |
@@ -65,7 +66,9 @@ Data Source` é mantido.
 ### `orders`
 - `id` (uuid PK), `buyer_id` (FK → `profiles`, cascade), `event_id`
   (FK → `events`, `ON DELETE RESTRICT` para preservar histórico),
-  `status`, `total_amount numeric(12,2)`, `created_at`
+  `quantity integer NOT NULL DEFAULT 1` (min. 1, constraint
+  `orders_quantity_at_least_one`), `status`, `total_amount numeric(12,2)`,
+  `created_at`
 - `status`: `pending | confirmed | cancelled | refunded`
 
 ### `tickets`
@@ -154,7 +157,8 @@ supabase link --project-ref <ref>
 supabase db push
 ```
 
-Ou cole `supabase/migrations/20260912000100_initial_schema.sql` no SQL Editor.
+Ou cole `supabase/migrations/20260912000100_initial_schema.sql` e depois
+`supabase/migrations/20260914000100_orders_quantity.sql` no SQL Editor.
 
 ## O que ainda permanece local
 
@@ -176,8 +180,9 @@ Ou cole `supabase/migrations/20260912000100_initial_schema.sql` no SQL Editor.
 4. **`DemoEvent` em `presentation/screens`:** modelo usado pelas camadas de
    domínio/dados (inversão de dependência). Refatoração planejada, não feita
    nesta etapa para não alterar contratos.
-5. **`orders` sem `quantity`:** o MVP local guarda `quantity` no pedido; a
-   tabela inicial não prevê quantidade (evolução posterior, sem bloquear etapas).
+5. **`orders.quantity`** (resolvido): o MVP local guarda `quantity` no pedido;
+   a coluna foi adicionada em `20260914000100_orders_quantity.sql` (inteiro,
+   NOT NULL, padrão `1` e constraint `quantity >= 1`).
 
 ## Próximos passos
 
