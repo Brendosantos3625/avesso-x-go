@@ -12,6 +12,10 @@ import 'supabase_config.dart';
 abstract final class SupabaseService {
   static bool _initialized = false;
 
+  /// `true` quando o Supabase foi inicializado com sucesso (credenciais
+  /// válidas presentes). Usado pela composição para escolher o repositório.
+  static bool get isReady => _initialized;
+
   /// Liga o cliente Supabase se [SupabaseConfig.isConfigured] e se o app
   /// ainda não tiver inicializado.
   ///

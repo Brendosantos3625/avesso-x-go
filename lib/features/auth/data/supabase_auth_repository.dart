@@ -3,10 +3,64 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:avesso_x_go/features/auth/domain/auth_repository.dart';
 import 'package:avesso_x_go/features/auth/domain/authenticated_user.dart';
 
-class SupabaseAuthRepository implements AuthRepository {
-  SupabaseAuthRepository();
+/// Contrato mínimo do supabase. Usado pelo [SupabaseAuthRepository] para
+/// permitir fakes nos testes, sem depender de rede nem de conta real.
+abstract interface class SupabaseAuthClient {
+  Future<AuthResponse> signInWithPassword({
+    required String email,
+    required String password,
+  });
 
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    Map<String, dynamic>? data,
+  });
+
+  Future<void> signOut();
+
+  User? get currentUser;
+}
+
+/// Implementação real sobre o cliente global do Supabase.
+/// Usa apenas chave anon (publishable) — nunca `service_role`.
+class SupabaseAuthClientAdapter implements SupabaseAuthClient {
   SupabaseClient get _client => Supabase.instance.client;
+
+  @override
+  Future<AuthResponse> signInWithPassword({
+    required String email,
+    required String password,
+  }) {
+    return _client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  @override
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    Map<String, dynamic>? data,
+  }) {
+    return _client.auth.signUp(email: email, password: password, data: data);
+  }
+
+  @override
+  Future<void> signOut() {
+    return _client.auth.signOut();
+  }
+
+  @override
+  User? get currentUser => _client.auth.currentUser;
+}
+
+class SupabaseAuthRepository implements AuthRepository {
+  SupabaseAuthRepository({SupabaseAuthClient? auth})
+      : _auth = auth ?? SupabaseAuthClientAdapter();
+
+  final SupabaseAuthClient _auth;
 
   @override
   Future<AuthResult> login({
@@ -14,7 +68,7 @@ class SupabaseAuthRepository implements AuthRepository {
     required String password,
   }) async {
     try {
-      final response = await _client.auth.signInWithPassword(
+      final response = await _auth.signInWithPassword(
         email: email.trim().toLowerCase(),
         password: password,
       );
@@ -61,7 +115,7 @@ class SupabaseAuthRepository implements AuthRepository {
     }
 
     try {
-      final response = await _client.auth.signUp(
+      final response = await _auth.signUp(
         email: cleanEmail,
         password: password,
         data: {
@@ -95,18 +149,25 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   AuthenticatedUser? getCurrentUser() {
-    final user = _client.auth.currentUser;
+    try {
+      final user = _auth.currentUser;
 
-    if (user == null) {
+      if (user == null) {
+        return null;
+      }
+
+      return _mapUser(user);
+    } catch (_) {
       return null;
     }
-
-    return _mapUser(user);
   }
 
   @override
   Future<void> signOut() async {
-    await _client.auth.signOut();
+    try {
+      await _auth.signOut();
+    } catch (_) {
+    }
   }
 
   AuthenticatedUser _mapUser(User user) {
